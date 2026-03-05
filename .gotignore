@@ -1,0 +1,20 @@
+# 🚫 Never commit Terraform state files
+terraform.tfstate
+terraform.tfstate.backup
+
+# Ignore crash logs
+crash.log
+
+# Ignore local Terraform plugin/cache directories
+.terraform/
+.terraform.tfstate.lock.info
+
+# Ignore override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore sensitive variable files (optional)
+*.tfvars
+*.tfvars.json
