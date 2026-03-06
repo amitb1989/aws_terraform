@@ -1,20 +1,63 @@
-# 🚫 Never commit Terraform state files
+###############################################################
+# 🚫 TERRAFORM: DO NOT COMMIT SYSTEM-GENERATED OR SENSITIVE FILES
+###############################################################
+
+# --- Terraform working directory ---
+# Ignore all .terraform folders, including nested module paths
+**/.terraform/
+
+# Ignore Terraform lock file (optional but recommended to commit for version pinning)
+# Uncomment if you want to EXCLUDE the lock file:
+# .terraform.lock.hcl
+
+# --- Terraform State Files ---
 terraform.tfstate
-terraform.tfstate.backup
+terraform.tfstate.*
+*.tfstate
+*.tfstate.*
 
-# Ignore crash logs
+# --- Logs & diagnostic files ---
 crash.log
+crash.*.log
+crash.out
 
-# Ignore local Terraform plugin/cache directories
-.terraform/
-.terraform.tfstate.lock.info
+# --- Terraform plan output files ---
+*.tfplan
+*.plan
 
-# Ignore override files
+# --- Sensitive variable files ---
+terraform.tfvars
+terraform.tfvars.json
+*.tfvars
+*.tfvars.json
+
+# --- Terraform override files (local custom overrides) ---
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
 
-# Ignore sensitive variable files (optional)
-*.tfvars
-*.tfvars.json
+# --- Local-only environment variable files ---
+.env
+.env.*
+
+# --- Ignore editor + OS system files ---
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# VS Code settings
+.vscode/
+
+# PyCharm / IntelliJ
+.idea/
+
+# Git folder noise
+.gitignore~
