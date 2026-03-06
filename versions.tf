@@ -8,7 +8,4 @@ terraform {
     helm = { source = "hashicorp/helm", version = "~> 2.13" }
     random = { source = "hashicorp/random", version = "~> 3.6" }
   }
-
-  # backend inputs provided at init time via -backend-config
-  backend "s3" {}
 }
