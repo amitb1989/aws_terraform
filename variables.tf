@@ -8,8 +8,13 @@ variable "vpc_cidr" {
   default = "10.0.0.0/16"
 }
 
+variable "admin_role_arn" {
+  type    = string
+  default = "arn:aws:iam::888696596070:role/AWSReservedSSO_AdministratorAccess_0ef322e71318c003"
+}
+
 variable "public_subnets" {
-  type    = list(string)
+  type = list(string)
   default = [
     "10.0.0.0/24",
     "10.0.1.0/24"
@@ -17,7 +22,7 @@ variable "public_subnets" {
 }
 
 variable "private_subnets" {
-  type    = list(string)
+  type = list(string)
   default = [
     "10.0.10.0/24",
     "10.0.11.0/24"
@@ -25,7 +30,7 @@ variable "private_subnets" {
 }
 
 variable "extra_tags" {
-  type    = map(string)
+  type = map(string)
   default = {
     Owner  = "AmitBapodara"
     Source = "Terraform"
