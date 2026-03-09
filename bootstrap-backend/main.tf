@@ -24,7 +24,7 @@ data "aws_caller_identity" "current" {}
 # Create S3 bucket for TF state (must already be unique; you provided it)
 resource "aws_s3_bucket" "state" {
   bucket        = var.bucket_name
-  force_destroy = false
+  force_destroy = true
 }
 
 # Block all public access
