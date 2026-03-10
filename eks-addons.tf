@@ -9,30 +9,64 @@ data "aws_eks_cluster_auth" "this" {
   depends_on = [module.eks]
 }
 
-# Kubernetes provider that talks to your EKS cluster
+# # Kubernetes provider that talks to your EKS cluster
+
 provider "kubernetes" {
-  alias                  = "eks"
+  alias = "eks"
+
   host                   = data.aws_eks_cluster.this.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.this.token
-}
 
-# Helm provider backed by the same cluster
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    args = [
+      "eks", "get-token",
+      "--cluster-name", module.eks.cluster_name,
+      "--region", var.region,
+      "--role-arn", var.admin_role_arn
+    ]
+  }
+}
 provider "helm" {
   alias = "eks"
 
   kubernetes {
     host                   = data.aws_eks_cluster.this.endpoint
     cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.this.token
-    # NOTE: no 'exec {}' block here. 'exec' is only valid in this nested kubernetes block,
-    # but since we already have a token, we don't need exec.
+
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      args = [
+        "eks", "get-token",
+        "--cluster-name", module.eks.cluster_name,
+        "--region", var.region,
+        "--role-arn", var.admin_role_arn
+      ]
+    }
   }
 }
-
 # -------------------------------
 # IRSA for AWS Load Balancer Controller
 # -------------------------------
+module "irsa_ebs" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.39"
+
+  role_name             = "${module.eks.cluster_name}-ebs-csi"
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    eks = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+
+  tags = local.tags
+}
+# IRSA for AWS Load Balancer Controller
 module "irsa_alb" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.39"
@@ -92,8 +126,24 @@ resource "helm_release" "alb_ingress" {
   ]
 }
 
-# IMPORTANT:
-# REMOVE the EBS CSI resources from root to avoid conflicts:
-# - module "irsa_ebs"
-# - resource "aws_eks_addon" "ebs_csi"
-# Manage EBS CSI ONLY in the EKS module via cluster_addons (Phase-2).
+
+resource "time_sleep" "wait_for_access" {
+  create_duration = "45s"
+}
+
+resource "aws_eks_addon" "ebs_csi" {
+  cluster_name  = module.eks.cluster_name
+  addon_name    = "aws-ebs-csi-driver"
+  addon_version = "v1.56.0-eksbuild.1"
+
+  # IMPORTANT: wire IRSA role to the controller service account
+  service_account_role_arn = module.irsa_ebs.iam_role_arn
+
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
+
+  depends_on = [
+    module.eks,
+    module.irsa_ebs
+  ]
+}
