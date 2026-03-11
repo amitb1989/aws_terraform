@@ -13,14 +13,38 @@ resource "aws_internet_gateway" "igw" {
 }
 
 # Public subnets + RTs
+# resource "aws_subnet" "public" {
+#   for_each = { for idx, cidr in var.public_subnet_cidrs : idx => { cidr = cidr, az = data.aws_availability_zones.available.names[idx] } }
+#   vpc_id                  = aws_vpc.this.id
+#   cidr_block              = each.value.cidr
+#   availability_zone       = each.value.az
+#   map_public_ip_on_launch = true
+#   tags = merge(var.tags, { Name = "${var.name}-public-${each.key}" })
+# }
+
+
+
 resource "aws_subnet" "public" {
-  for_each = { for idx, cidr in var.public_subnet_cidrs : idx => { cidr = cidr, az = data.aws_availability_zones.available.names[idx] } }
+  for_each = {
+    for idx, cidr in var.public_subnet_cidrs :
+    idx => { cidr = cidr, az = data.aws_availability_zones.available.names[idx] }
+  }
+
   vpc_id                  = aws_vpc.this.id
   cidr_block              = each.value.cidr
   availability_zone       = each.value.az
   map_public_ip_on_launch = true
-  tags = merge(var.tags, { Name = "${var.name}-public-${each.key}" })
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-public-${each.key}"
+      "kubernetes.io/role/elb" = "1"
+      "kubernetes.io/cluster/eks-cluster-assement" = "shared"
+    }
+  )
 }
+
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
@@ -54,13 +78,35 @@ resource "aws_nat_gateway" "nat" {
 }
 
 # Private subnets + RTs (each AZ -> its NAT)
+# resource "aws_subnet" "private" {
+#   for_each = { for idx, cidr in var.private_subnet_cidrs : idx => { cidr = cidr, az = data.aws_availability_zones.available.names[idx] } }
+#   vpc_id            = aws_vpc.this.id
+#   cidr_block        = each.value.cidr
+#   availability_zone = each.value.az
+#   tags = merge(var.tags, { Name = "${var.name}-private-${each.key}" })
+# }
+
+
 resource "aws_subnet" "private" {
-  for_each = { for idx, cidr in var.private_subnet_cidrs : idx => { cidr = cidr, az = data.aws_availability_zones.available.names[idx] } }
+  for_each = {
+    for idx, cidr in var.private_subnet_cidrs :
+    idx => { cidr = cidr, az = data.aws_availability_zones.available.names[idx] }
+  }
+
   vpc_id            = aws_vpc.this.id
   cidr_block        = each.value.cidr
   availability_zone = each.value.az
-  tags = merge(var.tags, { Name = "${var.name}-private-${each.key}" })
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-private-${each.key}"
+      "kubernetes.io/role/internal-elb" = "1"
+      "kubernetes.io/cluster/eks-cluster-assement" = "shared"
+    }
+  )
 }
+
 
 resource "aws_route_table" "private" {
   for_each = aws_subnet.private

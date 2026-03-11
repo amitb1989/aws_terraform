@@ -1,6 +1,7 @@
 locals { cluster_name = var.name }
 
 module "eks" {
+  
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.11"
 
@@ -23,7 +24,12 @@ module "eks" {
       instance_types = var.node_instance_types
       subnets        = var.private_subnet_ids
       tags           = var.tags
+      # 🔐 Add SSM perms to the node instance role
+      iam_role_additional_policies = {
+        ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
     }
+
   }
 
   cluster_addons = {

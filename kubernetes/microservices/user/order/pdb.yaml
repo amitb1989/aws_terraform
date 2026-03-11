@@ -1,1 +1,10 @@
-
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: order-svc-pdb
+  namespace: apps
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: order-svc
