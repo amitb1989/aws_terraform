@@ -9,10 +9,12 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
     alb.ingress.kubernetes.io/group.name: "apps"
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/success-codes: "200"
 spec:
   ingressClassName: alb
   rules:
-    - host: user.example.com
+    - host: user.amitb-demo.com
       http:
         paths:
           - path: /
@@ -22,7 +24,8 @@ spec:
                 name: user-svc
                 port:
                   number: 80
-    - host: order.example.com
+
+    - host: order.amitb-demo.com
       http:
         paths:
           - path: /
