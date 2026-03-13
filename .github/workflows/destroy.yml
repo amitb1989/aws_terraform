@@ -45,4 +45,5 @@ jobs:
           terraform destroy -var-file=env/${{ github.event.inputs.environment }}.tfvars -auto-approve
 
       - name: Cleanup Message
-        run: echo "Destroy completed for environment: ${{ github.event.inputs.environment }}"
+        run: |
+          echo "Destroy completed for environment: ${{ github.event.inputs.environment }}"
