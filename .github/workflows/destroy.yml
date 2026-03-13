@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Which environment to destroy?"
+        description: "Which environment to destroy? (dev/stage/prod)"
         required: true
         default: "dev"
       confirm:
@@ -18,9 +18,9 @@ permissions:
 
 jobs:
   destroy:
-    runs-on: ubuntu-latest
-
+    # Only run if confirm == YES
     if: ${{ github.event.inputs.confirm == 'YES' }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -37,11 +37,13 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ap-south-1
 
-      - name: Terraform Init
-        run: terraform init -backend-config=env/backend.tfvars
+      - name: Terraform Init (remote backend)
+        run: |
+          terraform init -backend-config=env/backend.tfvars
 
       - name: Terraform Destroy
-        run: terraform destroy -var-file=env/${{ github.event.inputs.environment }}.tfvars -auto-approve
+        run: |
+          terraform destroy -var-file=env/${{ github.event.inputs.environment }}.tfvars -auto-approve
 
       - name: Cleanup
         run: echo "Destroy completed for environment: ${{ github.event.inputs.environment }}"
