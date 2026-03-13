@@ -64,19 +64,17 @@ resource "aws_db_instance" "postgres" {
   skip_final_snapshot     = true
   tags                    = local.tags
 }
-
 resource "aws_security_group" "rds" {
   name        = "${var.env}-rds-sg"
-  description = "Security group for RDS Postgres"
+  description = "RDS SG; allow Postgres from EKS cluster SG"
   vpc_id      = module.network.vpc_id
 
-  # Allow EKS nodes to access Postgres (port 5432)
   ingress {
-    description     = "Allow EKS nodes to access RDS"
+    description     = "Postgres from EKS control-plane SG"
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = [data.aws_security_group.eks_nodes.id]
+    security_groups = [module.eks.node_security_group_id]
   }
 
   egress {
@@ -88,11 +86,6 @@ resource "aws_security_group" "rds" {
 
   tags = local.tags
 }
-
-data "aws_security_group" "eks_nodes" {
-  id = "sg-0bc262de991a1efd9"
-}
-
 resource "random_password" "db" {
   length  = 20
   special = true
