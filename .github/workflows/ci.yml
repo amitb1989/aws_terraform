@@ -2,7 +2,8 @@ name: terraform-eks-cicd
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
 
 permissions:
@@ -37,6 +38,6 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -var-file=env/dev.tfvars -input=false
 
-      - name: Terraform Apply (Auto Deploy)
+      - name: Terraform Apply (Auto)
         if: github.ref == 'refs/heads/main'
         run: terraform apply -var-file=env/dev.tfvars -auto-approve
