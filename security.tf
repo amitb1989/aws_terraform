@@ -8,7 +8,7 @@
 
 resource "aws_s3_bucket" "central_logs" {
   bucket        = "${var.env}-central-logs-${data.aws_caller_identity.this.account_id}"
-  force_destroy = false
+  force_destroy = true
   tags          = local.tags
 }
 

@@ -16,6 +16,14 @@ module "eks" {
 
   enable_irsa = true
 
+# cluster_enabled_log_types = [
+#     "api",
+#     "audit",
+#     "authenticator",
+#     "controllerManager",
+#     "scheduler"
+#   ]
+
   eks_managed_node_groups = {
     default = {
       min_size       = var.min_size

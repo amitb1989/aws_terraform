@@ -42,7 +42,7 @@ variable "alb_dns_name" {
   description = "The DNS name of the ALB created by the AWS Load Balancer Controller"
   type        = string
   # Tip: paste exactly from `kubectl get ingress -n apps`
-  default     = "k8s-apps-aafc3afa1b-681316976.ap-south-1.elb.amazonaws.com"
+  default     = " k8s-apps-aafc3afa1b-953655850.ap-south-1.elb.amazonaws.com"
 }
 
 variable "domain_name" {

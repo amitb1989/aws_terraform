@@ -89,6 +89,16 @@ resource "aws_security_group" "rds" {
 resource "random_password" "db" {
   length  = 20
   special = true
+  
+ # Use only RDS-safe special characters (exclude /, @, ", and space)
+  override_special = "!#$%^&*()-_=+[]{}:,.?~"
+
+  # Optional but recommended to ensure complexity
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  min_special = 1
+
 }
 
 # Route53 Failover between two regions (active-passive)
