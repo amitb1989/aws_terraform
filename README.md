@@ -1,6 +1,6 @@
 # 🚀 AWS EKS Infrastructure with Terraform \& GitHub Actions
 
-## ✅ Quick Summary (≈15 Lines)
+## ✅ Summary
 
 This repository provisions a complete, AWS platform using Terraform, EKS, Helm, and GitHub Actions.
 It includes reusable modules for VPC, EKS, Security, Observability, and DR.
