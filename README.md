@@ -59,6 +59,7 @@ Kubernetes manifests stored under `/kubernetes`.
 \---
 
 # 🧩 Architecture Overview
+<img width="1833" height="941" alt="image" src="https://github.com/user-attachments/assets/2ceac87b-935f-4f7c-b2b5-d7fd9a9fcf9e" />
 
 ✅ Multi-AZ VPC with public/private subnets  
 ✅ EKS cluster with managed node groups  
@@ -167,6 +168,7 @@ terraform destroy
 aws sso login --profile my-sso-profile
 terraform init -backend-config=env/backend.tfvars
 terraform workspace select dev
-terraform apply -var-file=env/dev.tfvars
+terraform plan -var-file env/dev.tfvars -out tfplan.bin
+terraform apply tfplan.bin
 ```
 
