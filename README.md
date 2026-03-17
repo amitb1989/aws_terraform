@@ -124,8 +124,6 @@ terraform init -backend-config=env/backend.tfvars
 
 * CloudWatch
 * Prometheus
-* Grafana dashboards
-* Alerts
 
 \---
 
