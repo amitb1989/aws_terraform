@@ -1,4 +1,4 @@
-# 🚀 AWS EKS Infrastructure with Terraform \& GitHub Actions
+# 🚀 AWS EKS Infrastructure with Terraform
 
 ## ✅ Summary
 
