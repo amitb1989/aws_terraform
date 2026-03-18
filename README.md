@@ -59,7 +59,8 @@ Kubernetes manifests stored under `/kubernetes`.
 \---
 
 # 🧩 Architecture Overview
-<img width="1752" height="937" alt="image" src="https://github.com/user-attachments/assets/103a8103-4c53-4a11-8812-119d6481d7a1" />
+<img width="1808" height="923" alt="image" src="https://github.com/user-attachments/assets/b18e0583-fade-4fc6-9244-0191484f4294" />
+
 
 
 ✅ Multi-AZ VPC with public/private subnets  
