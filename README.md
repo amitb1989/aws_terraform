@@ -59,7 +59,8 @@ Kubernetes manifests stored under `/kubernetes`.
 \---
 
 # 🧩 Architecture Overview
-<img width="1808" height="923" alt="image" src="https://github.com/user-attachments/assets/b18e0583-fade-4fc6-9244-0191484f4294" />
+<img width="1805" height="923" alt="image" src="https://github.com/user-attachments/assets/0295039d-6584-4bd2-8f79-fef6afb4d64a" />
+
 
 
 
